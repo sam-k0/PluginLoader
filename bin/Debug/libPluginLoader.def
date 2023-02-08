@@ -1,0 +1,7 @@
+EXPORTS
+    _Z17RegisterCallbacksPcS_S_S_ @1
+    call_plugins @2
+    check @3
+    getImplementation @4
+    getValue @5
+    load_plugin @6

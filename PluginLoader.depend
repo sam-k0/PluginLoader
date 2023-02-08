@@ -1,10 +1,10 @@
 # depslib dependency file v1.0
-1675807376 source:e:\code__blocks\projects\pluginloader\main.cpp
+1675865141 source:e:\code__blocks\projects\pluginloader\main.cpp
 	"InterfaceImplement.h"
 	"plugin.h"
 	<unistd.h>
 
-1675859697 e:\code__blocks\projects\pluginloader\interfaceimplement.h
+1675866927 e:\code__blocks\projects\pluginloader\interfaceimplement.h
 	"gms.h"
 	"PluginInterface.h"
 	"MiniMap.h"
@@ -14,13 +14,13 @@
 	<string.h>
 	<iostream>
 
-1675804148 e:\code__blocks\projects\pluginloader\plugininterface.h
+1675862251 e:\code__blocks\projects\pluginloader\plugininterface.h
 
-1675804221 e:\code__blocks\projects\pluginloader\minimap.h
+1675863097 e:\code__blocks\projects\pluginloader\minimap.h
 	<vector>
 	<string>
 
-1675808290 e:\code__blocks\projects\pluginloader\plugin.h
+1675864075 e:\code__blocks\projects\pluginloader\plugin.h
 	<Windows.h>
 	<stdio.h>
 	<iostream>

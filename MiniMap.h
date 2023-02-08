@@ -35,6 +35,7 @@ public:
 				return;
 			}
 		}
+		delete curr;
 	}
 
 	bool keyExists(string d)
@@ -92,4 +93,90 @@ public:
 
 		return keys;
 	}
+};
+
+struct StringMapPair{
+	string key;
+	MiniMap* value;
+
+	StringMapPair(string k, MiniMap* v)
+	{
+		key = k; value = v;
+	}
+
+	~StringMapPair()
+	{
+		delete value;
+	}	
+	
+};
+
+class MiniMapHolder{
+
+private:
+    vector<StringMapPair*> maps;
+public:
+	void addEntry(string k, MiniMap* v)
+	{
+		maps.push_back(new StringMapPair(k, v));
+	}
+
+	void removeEntry(string k)
+	{
+		StringMapPair* curr;
+
+		for (int i = 0; i < maps.size(); i++)
+		{
+			curr = maps.at(i);
+			if (curr->key == k)
+			{
+				maps.erase(maps.begin() + i);
+				return;
+			}
+		}
+		delete curr;
+	}
+
+	bool keyExists(string d)
+	{
+		StringMapPair* curr;
+		for (int i = 0; i < maps.size(); i++)
+		{
+			curr = maps.at(i);
+			if (curr->key == d)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	StringMapPair* getByKey(string k)
+	{
+		StringMapPair* curr;
+		for (int i = 0; i < maps.size(); i++)
+		{
+			curr = maps.at(i);
+			if (curr->key == k)
+			{
+				return curr;
+			}
+		}
+		return nullptr;
+	}
+
+	vector<string> getAllKeys()
+	{
+		vector<string> keys;
+
+		StringMapPair* curr;
+		for (int i = 0; i < maps.size(); i++)
+		{
+			curr = maps.at(i);
+			keys.push_back(curr->key);
+		}
+
+		return keys;
+	}
+  
 };

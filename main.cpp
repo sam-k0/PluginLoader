@@ -39,41 +39,50 @@ gmx double getValue(double in)
 
 gmx GMBOOL load_plugin(stringToDLL path)
 {
-    pplugin = new Plugin(path, "call");
-    std::string pth = getCurrentDir() + "\\PluginLoader.dll";
+    std::string pth = getCurrentDir() + "\\PluginLoader.dll"; // get the rel. loc of the loader
+    
     std::cout <<pth<<std::endl;
 
-    pplugin->call(969.0, gmu::string_to_constcharptr(pth));
-
+    pplugin = new Plugin(path, "call", gmu::string_to_constcharptr(pth));
     return GMTRUE;
 }
 
-gmx GMBOOL call_plugins(double arg, stringToDLL loaderpath)
+gmx GMBOOL call_plugins(double arg)
 {
-    return pplugin->call(arg,loaderpath);
+    return pplugin->call(arg);
 }
 
-gmx GMBOOL get_plugin_data()
+gmx GMBOOL get_plugin_data(stringToDLL pluginName)
 {
     //Change mapstorage to dsmap and trigger event
+    cout << "1" << endl;
+    string sPluginName = gmu::constcharptr_to_string(pluginName);
 
-    cout << "getPluginData" << endl;
-    vector<string> allkeys = mapStorage.getAllKeys();
-    KeyValuePair* currpair;
+    cout << "2" << endl;
+    vector<string> allKeys;
     int dsmap = CreateDsMap(0);
 
-    string tempk, tempv;
-
-    /*for (string k : allkeys)
+    cout << "3" << endl;
+    StringMapPair* pluginInfo = mapHolder.getByKey(pluginName); // Check if a plugin with this name is loaded
+    if(pluginInfo == nullptr)
     {
-        currpair = mapStorage.getByKey(k);
-        tempk = currpair->key;
-        tempv = currpair->value;
-        DsMapAddString(dsmap, gmu::string_to_charptr(tempk), gmu::string_to_charptr(tempv));
-    }*/
-    DsMapAddString(dsmap, "sus", "sus");
+        cout << "get_plugin_data: Could not find plugin with this name: " << pluginName << endl;
+        return 0.0;
+    }
+cout << "4" << endl;
+    allKeys = pluginInfo->value->getAllKeys();
+
+    for(string mkey : allKeys)
+    {
+        char* kk = gmu::string_to_charptr(pluginInfo->value->getByKey(mkey)->key);
+        char* vv = gmu::string_to_charptr(pluginInfo->value->getByKey(mkey)->value);
+        DsMapAddString(dsmap, kk, vv);
+    }
+cout << "5" << endl;
 
     CreateAsynEventWithDSMap(dsmap, EVENT_OTHER_SOCIAL);
+
+    return GMTRUE;
 }
 
 

@@ -5,8 +5,8 @@
 #include "gms.h"
 using namespace std;
 
-typedef double (*func)(double arg, const char* loaderpath);
-typedef double (*initfunc)();
+typedef double (*func)(double arg);
+typedef double (*initfunc)(const char* loaderpath);
 
 typedef struct Plugin
 {
@@ -14,8 +14,7 @@ typedef struct Plugin
 	HMODULE hModule = NULL;
     initfunc initFunc = NULL;
 
-
-	Plugin(stringToDLL dllpath, stringToDLL funcname)
+	Plugin(stringToDLL dllpath, stringToDLL funcname, stringToDLL loaderpath)
 	{
 	    hModule = LoadLibraryA(dllpath);
 		if(hModule)
@@ -31,17 +30,16 @@ typedef struct Plugin
 			}
 
             initFunc = (initfunc)GetProcAddress(hModule, "init");
+            initFunc(loaderpath);
 
-            initFunc();
-
-			//CloseHandle(hModule);
+			CloseHandle(hModule);
 		}
 	}
 
-	double call(double arg, stringToDLL loaderpath)
+	double call(double arg)
 	{
 		try {
-			return loadedFunction(arg, loaderpath);
+			return loadedFunction(arg);
 		}
 		catch (...)
 		{

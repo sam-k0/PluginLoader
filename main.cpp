@@ -26,7 +26,7 @@ gmx double check(double i)
 
 
 Implementation* implementation = new Implementation();
-Plugin* pplugin = NULL;
+vector<Plugin*> plugins;
 
 gmx IYYC_Callback* getImplementation() {
     return implementation;
@@ -43,33 +43,33 @@ gmx GMBOOL load_plugin(stringToDLL path)
     
     std::cout <<pth<<std::endl;
 
-    pplugin = new Plugin(path, "call", gmu::string_to_constcharptr(pth));
+    plugins.push_back( new Plugin(path, "call", gmu::string_to_constcharptr(pth)));
     return GMTRUE;
 }
 
 gmx GMBOOL call_plugins(double arg)
 {
-    return pplugin->call(arg);
+    for(Plugin* p : plugins)
+    {
+        p->call(arg);
+    }
 }
 
 gmx GMBOOL get_plugin_data(stringToDLL pluginName)
 {
     //Change mapstorage to dsmap and trigger event
-    cout << "1" << endl;
     string sPluginName = gmu::constcharptr_to_string(pluginName);
 
-    cout << "2" << endl;
     vector<string> allKeys;
     int dsmap = CreateDsMap(0);
 
-    cout << "3" << endl;
     StringMapPair* pluginInfo = mapHolder.getByKey(pluginName); // Check if a plugin with this name is loaded
     if(pluginInfo == nullptr)
     {
         cout << "get_plugin_data: Could not find plugin with this name: " << pluginName << endl;
         return 0.0;
     }
-cout << "4" << endl;
+
     allKeys = pluginInfo->value->getAllKeys();
 
     for(string mkey : allKeys)
@@ -78,7 +78,6 @@ cout << "4" << endl;
         char* vv = gmu::string_to_charptr(pluginInfo->value->getByKey(mkey)->value);
         DsMapAddString(dsmap, kk, vv);
     }
-cout << "5" << endl;
 
     CreateAsynEventWithDSMap(dsmap, EVENT_OTHER_SOCIAL);
 

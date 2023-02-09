@@ -8,7 +8,7 @@ The host-side implemented PluginLoader for my [PluginLoader_Example](https://git
 ## To-Do
 
 - [x] Bake a cake
-- [] Find out where tf a memory leak is
+- [ ] Find out where tf a memory leak is
 
 ---
 ## Prerequisites

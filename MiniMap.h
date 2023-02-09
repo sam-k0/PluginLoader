@@ -20,7 +20,16 @@ private:
 public:
 	void addEntry(string k, string v)
 	{
-		data.push_back(new KeyValuePair(k, v));
+	    // Check if this value already exists
+	    KeyValuePair* kvp = getByKey(k);
+	    if(kvp == nullptr) // entry already exists
+        {
+            data.push_back(new KeyValuePair(k, v));
+        }
+		else{
+            // already exists
+            kvp->value = v;
+		}
 	}
 
 	void removeEntry(string k)
@@ -107,8 +116,8 @@ struct StringMapPair{
 	~StringMapPair()
 	{
 		delete value;
-	}	
-	
+	}
+
 };
 
 class MiniMapHolder{
@@ -178,5 +187,5 @@ public:
 
 		return keys;
 	}
-  
+
 };

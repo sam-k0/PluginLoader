@@ -5,7 +5,10 @@
 ## What is this?
 The host-side implemented PluginLoader for my [PluginLoader_Example](https://github.com/sam-k0/PluginLoader_DefaultPlugin). <br>
 
+## To-Do
 
+- [x] Bake a cake
+- [] Find out where tf a memory leak is
 
 ---
 ## Prerequisites

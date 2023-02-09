@@ -13,7 +13,6 @@ class Implementation : public IYYC_Callback
 public:
     void setData(const char* pluginName,const char* key, const char* value) // add a new key value pair to storage
     {
-        cout << "In set data"<< endl;
         string k, v, pn;
         k = gmu::constcharptr_to_string(key);
         v = gmu::constcharptr_to_string(value);

@@ -41,8 +41,6 @@ gmx GMBOOL load_plugin(stringToDLL path, stringToDLL pluginName)
 {
     std::string pth = getCurrentDir() + "\\PluginLoader.dll"; // get the rel. loc of the loader
 
-    std::cout <<pth<<std::endl;
-
     plugins.push_back( new Plugin(path, "call", gmu::string_to_constcharptr(pth), pluginName));
     return GMTRUE;
 }
@@ -53,6 +51,7 @@ gmx GMBOOL call_plugins(double arg)
     {
         p->call(arg);
     }
+    return GMTRUE;
 }
 
 gmx GMBOOL get_plugin_data(stringToDLL pluginName)
@@ -80,7 +79,6 @@ gmx GMBOOL get_plugin_data(stringToDLL pluginName)
     }
 
     CreateAsynEventWithDSMap(dsmap, EVENT_OTHER_SOCIAL);
-
     return GMTRUE;
 }
 

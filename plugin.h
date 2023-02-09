@@ -13,7 +13,7 @@ typedef struct Plugin
 	func loadedFunction = NULL;
 	HMODULE hModule = NULL;
     initfunc initFunc = NULL;
-    stringToDLL pluginName = NULL;
+    stringToDLL pluginName;
 
 	Plugin(stringToDLL dllpath, stringToDLL funcname, stringToDLL loaderpath, stringToDLL pName)
 	{
@@ -26,12 +26,9 @@ typedef struct Plugin
 			{
 				cout << "Error while getProcAddress: "<<GetLastError() << endl;
 			}
-			else
-			{
-				cout << "GetProcaddress success!" << endl;
-			}
 
             initFunc = (initfunc)GetProcAddress(hModule, "init");
+
             if(initFunc(loaderpath, pluginName) == GMTRUE)
             {
                 // Successfully initialized
@@ -49,7 +46,7 @@ typedef struct Plugin
 		}
 		catch (...)
 		{
-			cout << "Error calling call" << endl;
+			cout << "Error calling call for plugin " << pluginName << endl;
 			return 0.0;
 		}
 

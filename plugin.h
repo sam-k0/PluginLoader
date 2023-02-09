@@ -6,16 +6,18 @@
 using namespace std;
 
 typedef double (*func)(double arg);
-typedef double (*initfunc)(const char* loaderpath);
+typedef double (*initfunc)(const char* loaderpath, const char* pluginName);
 
 typedef struct Plugin
 {
 	func loadedFunction = NULL;
 	HMODULE hModule = NULL;
     initfunc initFunc = NULL;
+    stringToDLL pluginName = NULL;
 
-	Plugin(stringToDLL dllpath, stringToDLL funcname, stringToDLL loaderpath)
+	Plugin(stringToDLL dllpath, stringToDLL funcname, stringToDLL loaderpath, stringToDLL pName)
 	{
+	    pluginName = pName;
 	    hModule = LoadLibraryA(dllpath);
 		if(hModule)
 		{
@@ -30,7 +32,11 @@ typedef struct Plugin
 			}
 
             initFunc = (initfunc)GetProcAddress(hModule, "init");
-            initFunc(loaderpath);
+            if(initFunc(loaderpath, pluginName) == GMTRUE)
+            {
+                // Successfully initialized
+                cout << "[PluginLoader] Successfully initialized plugin " << pluginName << endl;
+            }
 
 			CloseHandle(hModule);
 		}

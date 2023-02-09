@@ -37,13 +37,13 @@ gmx double getValue(double in)
     return implementation->getData();
 }
 
-gmx GMBOOL load_plugin(stringToDLL path)
+gmx GMBOOL load_plugin(stringToDLL path, stringToDLL pluginName)
 {
     std::string pth = getCurrentDir() + "\\PluginLoader.dll"; // get the rel. loc of the loader
-    
+
     std::cout <<pth<<std::endl;
 
-    plugins.push_back( new Plugin(path, "call", gmu::string_to_constcharptr(pth)));
+    plugins.push_back( new Plugin(path, "call", gmu::string_to_constcharptr(pth), pluginName));
     return GMTRUE;
 }
 

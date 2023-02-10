@@ -3,6 +3,8 @@
 #include "plugin.h"
 //#include "gms.h"
 #include <unistd.h>
+#include "CppMap.h"
+#include <vector>
 
 std::string getCurrentDir() // Returns EXE directory
 {
@@ -57,23 +59,19 @@ gmx GMBOOL call_plugins(double arg)
 gmx GMBOOL get_plugin_data(stringToDLL pluginName)
 {
     //Change mapstorage to dsmap and trigger event
-    vector<string> allKeys;
-    int dsmap = CreateDsMap(0);
 
-    StringMapPair* pluginInfo = mapHolder.getByKey(pluginName); // Check if a plugin with this name is loaded
-    if(pluginInfo == nullptr)
+    map<string, string> pmap = plgStorage.getPluginMap(gmu::constcharptr_to_string(pluginName));
+    if(pmap.size() == 0)
     {
-        cout << "get_plugin_data: Could not find plugin with this name: " << pluginName << endl;
-        return 0.0;
+        return GMFALSE;
     }
 
-    allKeys = pluginInfo->value->getAllKeys();
+    int dsmap = CreateDsMap(0);
 
-    for(string mkey : allKeys)
+    map<string, string>::iterator it;
+    for(it = pmap.begin(); it != pmap.end(); it++)
     {
-        char* kk = gmu::string_to_charptr(pluginInfo->value->getByKey(mkey)->key);
-        char* vv = gmu::string_to_charptr(pluginInfo->value->getByKey(mkey)->value);
-        DsMapAddString(dsmap, kk, vv);
+        DsMapAddString(dsmap, gmu::string_to_charptr(it->first), gmu::string_to_charptr(it->second));
     }
 
     CreateAsynEventWithDSMap(dsmap, EVENT_OTHER_SOCIAL);
@@ -83,46 +81,40 @@ gmx GMBOOL get_plugin_data(stringToDLL pluginName)
 
 gmx GMINT get_plugin_data_map(stringToDLL pluginName, int dsmap)
 {
-    vector<string> allKeys;
-    //int dsmap = CreateDsMap(0);
-
-    StringMapPair* pluginInfo = mapHolder.getByKey(pluginName); // Check if a plugin with this name is loaded
-    if(pluginInfo == nullptr)
+    map<string, string> pmap = plgStorage.getPluginMap(gmu::constcharptr_to_string(pluginName));
+    if(pmap.size() == 0)
     {
-        cout << "get_plugin_data: Could not find plugin with this name: " << pluginName << endl;
-        return 0.0;
+        return GMFALSE;
     }
 
-    allKeys = pluginInfo->value->getAllKeys();
-
-    for(string mkey : allKeys)
+    map<string, string>::iterator it;
+    for(it = pmap.begin(); it != pmap.end(); it++)
     {
-        char* kk = gmu::string_to_charptr(pluginInfo->value->getByKey(mkey)->key);
-        char* vv = gmu::string_to_charptr(pluginInfo->value->getByKey(mkey)->value);
-        DsMapAddString(dsmap, kk, vv);
+        DsMapAddString(dsmap, gmu::string_to_charptr(it->first), gmu::string_to_charptr(it->second));
     }
-
-    //delete pluginInfo->value;
 
     return dsmap;
 }
 
 gmx stringFromDLL get_plugin_data_by_key(stringToDLL pn, stringToDLL key)
 {
-    StringMapPair* pluginInfo = mapHolder.getByKey(pn); // Check if a plugin with this name is loaded
-    if(pluginInfo == nullptr)
+    map<string, string> pmap = plgStorage.getPluginMap(gmu::constcharptr_to_string(pn));
+    if(pmap.size() == 0)
     {
-        cout << "get_plugin_data: Could not find plugin with this name: " << pn << endl;
-        return "";
+        return gmu::string_to_charptr(string(""));
     }
 
-    return gmu::string_to_charptr(pluginInfo->value->getByKey(key)->value);
+    if(pmap.find(key) == pmap.end())
+    {
+        return gmu::string_to_charptr(string(""));
+    }
 
+    return gmu::string_to_charptr(pmap.find(key)->second);
 }
 
 gmx GMBOOL print_info(stringToDLL pluginName)
 {
-    StringMapPair* pluginInfo = mapHolder.getByKey(pluginName);
+   /* StringMapPair* pluginInfo = mapHolder.getByKey(pluginName);
 
     if(pluginInfo)
     {
@@ -133,7 +125,7 @@ gmx GMBOOL print_info(stringToDLL pluginName)
     {
         cout << "There is no space allocated for this plugin." << endl;
         cout << "Total plugin entries: " << mapHolder.get_size() << endl;
-    }
+    }*/
     return GMTRUE;
 }
 

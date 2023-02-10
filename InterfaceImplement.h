@@ -1,10 +1,10 @@
 #pragma once
 #include "gms.h"
 #include "PluginInterface.h"
-#include "MiniMap.h"
+#include "CppMap.h"
 using namespace std;
 
-MiniMapHolder mapHolder;
+PluginStorage plgStorage;
 
 const int EVENT_OTHER_SOCIAL = 70;
 
@@ -18,28 +18,7 @@ public:
         v = gmu::constcharptr_to_string(value);
         pn = gmu::constcharptr_to_string(pluginName);
 
-        StringMapPair* pluginStorage = mapHolder.getByKey(pn); // try to get the String <--> Dsmap storage
-
-        if(pluginStorage != nullptr) // the storage already exists
-        {
-            if(pluginStorage->value != nullptr) // Map exists
-            {
-                pluginStorage->value->addEntry(k,v);
-            }
-            else // Add new map
-            {
-                pluginStorage->value = new MiniMap();
-                pluginStorage->value->addEntry(k,v);
-            }
-        }
-        else // First time calling the plugin storage
-        {
-            mapHolder.addEntry(gmu::constcharptr_to_string(pluginName), new MiniMap());
-
-            pluginStorage = mapHolder.getByKey(gmu::constcharptr_to_string(pluginName));
-
-            pluginStorage->value->addEntry(k,v);
-        }
+        plgStorage.updatePluginStorage(pn, k ,v);
     }
 
     double getData() // not used

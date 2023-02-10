@@ -82,6 +82,22 @@ gmx GMBOOL get_plugin_data(stringToDLL pluginName)
     return GMTRUE;
 }
 
+gmx GMBOOL print_info(stringToDLL pluginName)
+{
+    StringMapPair* pluginInfo = mapHolder.getByKey(pluginName);
+
+    if(pluginInfo)
+    {
+        cout << "Loaded plugin storage: " << pluginInfo->value->get_size() << endl;
+        cout << "Total plugin entries: " << mapHolder.get_size() << endl;
+    }
+    else
+    {
+        cout << "There is no space allocated for this plugin." << endl;
+        cout << "Total plugin entries: " << mapHolder.get_size() << endl;
+    }
+    return GMTRUE;
+}
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,

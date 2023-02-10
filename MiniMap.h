@@ -45,6 +45,7 @@ public:
 			}
 		}
 		delete curr;
+		curr = nullptr;
 	}
 
 	bool keyExists(string d)
@@ -102,6 +103,25 @@ public:
 
 		return keys;
 	}
+
+	int get_size()
+	{
+	    return data.size();
+	}
+
+	~MiniMap()
+	{
+        for(KeyValuePair* kvp : data)
+        {
+            if(kvp != nullptr)
+            {
+             delete kvp;
+            }
+
+        }
+
+        data.clear();
+	}
 };
 
 struct StringMapPair{
@@ -115,6 +135,7 @@ struct StringMapPair{
 
 	~StringMapPair()
 	{
+	    if(value != nullptr)
 		delete value;
 	}
 
@@ -127,7 +148,17 @@ private:
 public:
 	void addEntry(string k, MiniMap* v)
 	{
-		maps.push_back(new StringMapPair(k, v));
+	    if(!keyExists(k))
+        {
+            maps.push_back(new StringMapPair(k, v));
+        }
+        else // already exists
+        {
+            StringMapPair* smp = getByKey(k); // get existing
+            delete smp->value;                // delete value
+            smp->value = v;
+        }
+
 	}
 
 	void removeEntry(string k)
@@ -143,6 +174,8 @@ public:
 				return;
 			}
 		}
+		delete curr->value;
+		curr->value = nullptr;
 		delete curr;
 	}
 
@@ -188,4 +221,8 @@ public:
 		return keys;
 	}
 
+	int get_size()
+	{
+	    return maps.size();
+	}
 };

@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 using namespace std;
+// Switch this godforsaken Mini Map architecture to std::maps please oh my god
 
 struct KeyValuePair {
 	string key;
@@ -22,7 +23,7 @@ public:
 	{
 	    // Check if this value already exists
 	    KeyValuePair* kvp = getByKey(k);
-	    if(kvp == nullptr) // entry already exists
+	    if(kvp == nullptr) // doesnt exist
         {
             data.push_back(new KeyValuePair(k, v));
         }
@@ -30,6 +31,18 @@ public:
             // already exists
             kvp->value = v;
 		}
+	}
+
+	void clear()
+	{
+		for(KeyValuePair* kvp : data)
+        {
+            if(kvp != nullptr)
+            {
+             delete kvp;
+            }
+        }
+		data.clear();
 	}
 
 	void removeEntry(string k)
@@ -115,7 +128,7 @@ public:
         {
             if(kvp != nullptr)
             {
-             delete kvp;
+                delete kvp;
             }
 
         }

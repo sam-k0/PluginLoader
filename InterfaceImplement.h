@@ -22,8 +22,13 @@ public:
 
         if(pluginStorage != nullptr) // the storage already exists
         {
-            if(pluginStorage->value != nullptr)
+            if(pluginStorage->value != nullptr) // Map exists
             {
+                pluginStorage->value->addEntry(k,v);
+            }
+            else // Add new map
+            {
+                pluginStorage->value = new MiniMap();
                 pluginStorage->value->addEntry(k,v);
             }
         }

@@ -41,15 +41,7 @@ typedef struct Plugin
 
 	double call(double arg)
 	{
-		try {
-			return loadedFunction(arg);
-		}
-		catch (...)
-		{
-			cout << "Error calling call for plugin " << pluginName << endl;
-			return 0.0;
-		}
-
+		return loadedFunction(arg);
 	}
 
 	void unload()

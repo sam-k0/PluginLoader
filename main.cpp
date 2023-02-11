@@ -14,8 +14,9 @@ std::string getCurrentDir() // Returns EXE directory
     cCurrentPath[sizeof(cCurrentPath) - 1] = '\0'; // not really required
 
     char* s = cCurrentPath; // save path from buffer into currentpath chararr
-
-    return std::string(s);
+    std::string str(s);
+    free(s);
+    return str;
 }
 
 gmx double check(double i)
@@ -30,6 +31,7 @@ gmx double check(double i)
 Implementation* implementation = new Implementation();
 vector<Plugin*> plugins;
 
+
 gmx IYYC_Callback* getImplementation() {
     return implementation;
 }
@@ -41,7 +43,8 @@ gmx double getValue(double in)
 
 gmx GMBOOL load_plugin(stringToDLL path, stringToDLL pluginName)
 {
-    std::string pth = getCurrentDir() + "\\PluginLoader.dll"; // get the rel. loc of the loader
+    string cwd = getCurrentDir();
+    std::string pth = cwd + "\\PluginLoader.dll"; // get the rel. loc of the loader
 
     plugins.push_back( new Plugin(path, "call", gmu::string_to_constcharptr(pth), pluginName));
     return GMTRUE;
@@ -49,6 +52,8 @@ gmx GMBOOL load_plugin(stringToDLL path, stringToDLL pluginName)
 
 gmx GMBOOL call_plugins(double arg)
 {
+    gmu::cleanStrings();
+
     for(Plugin* p : plugins)
     {
         p->call(arg);
@@ -69,6 +74,9 @@ gmx GMBOOL get_plugin_data(stringToDLL pluginName)
     int dsmap = CreateDsMap(0);
 
     map<string, string>::iterator it;
+
+
+
     for(it = pmap.begin(); it != pmap.end(); it++)
     {
         DsMapAddString(dsmap, gmu::string_to_charptr(it->first), gmu::string_to_charptr(it->second));
@@ -99,6 +107,7 @@ gmx GMINT get_plugin_data_map(stringToDLL pluginName, int dsmap)
 gmx stringFromDLL get_plugin_data_by_key(stringToDLL pn, stringToDLL key)
 {
     map<string, string> pmap = plgStorage.getPluginMap(gmu::constcharptr_to_string(pn));
+
     if(pmap.size() == 0)
     {
         return gmu::string_to_charptr(string(""));
@@ -109,8 +118,23 @@ gmx stringFromDLL get_plugin_data_by_key(stringToDLL pn, stringToDLL key)
         return gmu::string_to_charptr(string(""));
     }
 
-    return gmu::string_to_charptr(pmap.find(key)->second);
+    string str = pmap.find(key)->second;
+
+
+
+    return gmu::string_to_charptr(str);
 }
+
+
+gmx char* memtest(double i)
+{
+    string str = "AMOGUS AMOGUS";
+    //std::vector<char> chars(str.c_str(), str.c_str() + str.size() + 1u);
+
+    return gmu::string_to_charptr(str);
+}
+
+
 
 gmx GMBOOL print_info(stringToDLL pluginName)
 {

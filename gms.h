@@ -4,6 +4,7 @@ typedef char* stringFromDLL;        // String passed DLL -- > GM
 typedef double GMBOOL;
 typedef double GMINT;
 
+
 #define GMTRUE 1.0
 #define GMFALSE 0.0
 
@@ -13,7 +14,14 @@ typedef double GMINT;
 #include <string>
 #include <string.h>
 #include <iostream>
+#include <string.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <vector>
+#include <algorithm>
 using namespace std; // Fight me
+
+vector<char*> disposableStrings;
 
 void (*CreateAsynEventWithDSMap)(int, int) = NULL;
 int (*CreateDsMap)(int _num, ...) = NULL;
@@ -47,9 +55,27 @@ namespace gmu {
     */
     static char* string_to_charptr(string s)
     {
-        return _strdup(s.c_str());
+        char* c = _strdup(s.c_str());
+
+        if(std::find(disposableStrings.begin(), disposableStrings.end(), c) == disposableStrings.end())
+        {
+            disposableStrings.push_back(c);
+        }
+
+        return c;
     }
 
+    gmx GMBOOL cleanStrings()
+    {
+        for(char* e : disposableStrings)
+        {
+            free(e);
+        }
+
+        cout << "Freed " << disposableStrings.size() << " strings." << endl;
+        disposableStrings.clear();
+        return GMTRUE;
+    }
 
     /**
     * @param s String to convert to const char*
@@ -78,10 +104,6 @@ namespace gmu {
         std::cout << s << std::endl;
     }
 
-    static char* ccp_to_cp(const char* p)
-    {
-        return(string_to_charptr(constcharptr_to_string(p)));
-    }
 
 };
 
